@@ -1,0 +1,34 @@
+Socket本质上就是在2台网络互通的电脑之间，架设一个通道，两台电脑通过这个通道来实现数据的互相传。
+它把复杂的TCP/IP协议族隐藏在Socket接口后面，对用户来说，一组简单的接口就是全部，让Socket去组织数据，以符合指定的协议。
+
+Socket=（IP地址：端口号）
+实现一个最简单的socket通信：
+#######################################server端：
+import socket
+server = socket.socket(socket.AF_INET,socket.SOCK_STREAM) #声明socket类型同时生成socket链接对象
+server.bind(('127.0.0.1',8000)) #绑定要监听的端口
+server.listen(5)#监听
+conn,addr=server.accept() #等待
+print('我要开始等电话来')
+print(conn,addr)  #打印请求和请求地址
+while True:
+    msg = conn.recv(1024)   #收消息
+    print('客户端发来的消息是：',msg)
+    conn.send(msg.upper()) #将收到的转成大写再发回去
+
+conn.close()    # 关闭链接
+server.close()  #关闭服务
+
+
+##########################################client端
+mport socket
+client = socket.socket(socket.AF_INET,socket.SOCK_STREAM)    #声明socket类型同时生成socket链接对象
+
+client.connect(('127.0.0.1',8000)) #链接对应IP和端口
+
+
+while True:
+    msg = input('>>').strip()
+    client.send(msg.encode('utf-8'))   #发送消息
+    data = client.recv(1024)            #接收消息
+    print('收到服务端发来的消息：',data)
